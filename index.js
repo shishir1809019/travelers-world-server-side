@@ -9,9 +9,6 @@ const ObjectId = require("mongodb").ObjectId;
 app.use(cors());
 app.use(express.json());
 
-//user=mydbuser1
-//pass = TTrXhXzzXH1YSGm9
-
 const { MongoClient } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.jcjym.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -68,30 +65,49 @@ async function run() {
 
     // //Update api
 
-    // app.put("/users/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const updatedUser = req.body;
-    //   const filter = { _id: ObjectId(id) };
-    //   const options = { upsert: true };
-    //   const updateDoc = {
-    //     $set: {
-    //       name: updatedUser.name,
-    //       email: updatedUser.email,
-    //     },
-    //   };
-    //   const result = await userCollection.updateOne(filter, updateDoc, options);
-    //   res.json(result);
-    //   console.log("updated", id);
-    //   // res.send("updated");
-    // });
+    app.put("/bookingStatus/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          status: "confirmed",
+        },
+      };
+      const result = await bookingCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+      console.log("updated", id);
+      // res.send("updated");
+    });
 
     // // delete api
-    app.delete("/myOrder/:id", async (req, res) => {
+    app.delete("/booking/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await bookingCollection.deleteOne(query);
 
       console.log(result);
+      res.send(result);
+    });
+
+    //get api for manage all booking
+    app.get("/allBookings", async (req, res) => {
+      const cursor = bookingCollection.find({});
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+
+    //add new service
+    app.post("/addService", async (req, res) => {
+      const newUser = req.body;
+      const result = await serviceCollection.insertOne(newUser);
+      //   res.send("hit the post");
+      console.log("got user", req.body);
+      console.log("added user", result);
       res.send(result);
     });
   } finally {
