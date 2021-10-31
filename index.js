@@ -15,12 +15,6 @@ const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-// client.connect((err) => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   console.log("hitting");
-//   client.close();
-// });
 
 async function run() {
   try {
@@ -29,13 +23,14 @@ async function run() {
     const serviceCollection = database.collection("services");
     const bookingCollection = database.collection("booking");
 
-    //get api
+    //get api for services
     app.get("/services", async (req, res) => {
       const cursor = serviceCollection.find({});
       const services = await cursor.toArray();
       res.send(services);
     });
 
+    //single services
     app.get("/service/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -43,17 +38,14 @@ async function run() {
       res.send(service);
     });
 
-    // //Post api
+    //Post api for booking
     app.post("/booking", async (req, res) => {
       const newBooking = req.body;
       const result = await bookingCollection.insertOne(newBooking);
-
-      //   res.send("hit the post");
-      console.log("got user", req.body);
-      console.log("added user", result);
       res.send(result);
     });
 
+    //get api for my orders
     app.get("/myOrders/:email", async (req, res) => {
       console.log(req.params);
       const result = await bookingCollection
@@ -63,7 +55,7 @@ async function run() {
       console.log(result);
     });
 
-    // //Update api
+    //Update api for status
 
     app.put("/bookingStatus/:id", async (req, res) => {
       const id = req.params.id;
@@ -80,8 +72,6 @@ async function run() {
         options
       );
       res.send(result);
-      console.log("updated", id);
-      // res.send("updated");
     });
 
     // // delete api
@@ -105,9 +95,6 @@ async function run() {
     app.post("/addService", async (req, res) => {
       const newUser = req.body;
       const result = await serviceCollection.insertOne(newUser);
-      //   res.send("hit the post");
-      console.log("got user", req.body);
-      console.log("added user", result);
       res.send(result);
     });
   } finally {
@@ -117,7 +104,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Hello travelers!");
 });
 
 app.listen(port, () => {
