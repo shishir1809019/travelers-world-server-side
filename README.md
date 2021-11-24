@@ -2,7 +2,7 @@
 
 website live-link: https://traveler-s-world.web.app/
 
-client-side-code-link: https://github.com/programming-hero-web-course1/tourism-or-delivery-website-client-side-shishir1809019
+client-side-code-link: https://github.com/shishir1809019/travelers-world-client-side
 
 - In the server side I have used - **MongoDB || Node || Express**
 - I have used hare get, post, delete and put api call
